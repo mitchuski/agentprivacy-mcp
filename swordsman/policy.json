@@ -1,0 +1,11 @@
+{
+  "kind": "agentprivacy.swordsman-policy/1",
+  "note": "Fixed policy the Swordsman enforces. No LLM reads this; no page content can change it. Edit it by hand, as the bearer.",
+  "signOnlyChainedEvolutions": true,
+  "signOnlyOwnBearer": true,
+  "refuseUnbakedSteps": true,
+  "maxSignaturesPerMinute": 6,
+  "allowGenesisWithPrior": true,
+  "sealRecipients": [],
+  "predicatesAllowed": ["evolved_since"]
+}

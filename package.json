@@ -1,0 +1,14 @@
+{
+  "name": "agentprivacy-mcp",
+  "version": "0.1.0",
+  "description": "The privacy guide, the 64-vertex sovereignty lattice and the City Key as MCP tools — the Mage's read tools of the Verifiable Trust Agent. Zero dependencies.",
+  "type": "module",
+  "bin": { "agentprivacy-mcp": "server.mjs" },
+  "scripts": {
+    "start": "node server.mjs",
+    "list": "node server.mjs --list",
+    "test": "node test/canon.test.mjs && node test/bridge.test.mjs && node test/swordsman.test.mjs && node bin/walk-demo.mjs --sign"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

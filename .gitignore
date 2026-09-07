@@ -1,0 +1,14 @@
+node_modules/
+*.log
+.DS_Store
+
+# The dream loop's last-seen hashes — runtime state, regenerated on the next tick.
+# The record it keeps is chronicles/DREAM-LOG.md, which IS committed.
+chronicles/.dream-state.json
+
+# Nothing here should ever hold key material: the Swordsman's keystore lives at
+# ~/.agentprivacy/swordsman/ (identity.json 0600, policy.json, ledger.jsonl), outside
+# this tree on purpose. These are belt and braces.
+identity.json
+*.secret
+.agentprivacy/
