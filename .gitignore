@@ -12,3 +12,13 @@ chronicles/.dream-state.json
 identity.json
 *.secret
 .agentprivacy/
+
+# Private integration runtime material (keep outside the repo).
+.env
+.env.*
+!.env.example
+private/
+runtime/
+*.private.json
+*.pem
+*.key

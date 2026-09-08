@@ -103,3 +103,19 @@ unchanged everywhere.
 Rungs 2–5 of `agentprivacy_master/docs/PLAN_CITY_KEY_CRYPTO_UPGRADE_2026-09-03.md`:
 `carrier.seal`, `psi.blind/unblind`, `proof.predicate`, `vrc.issue`, and the two
 human-consent tools. Designed there; not built.
+
+## Browser game integration (in progress)
+
+`browser_action_prepare` creates an exact, short-lived spell/sticker proposal for extension review. It does not dispatch or authorise a browser effect. See [browser action boundary](docs/BROWSER_ACTIONS.md) for receipt folding, durable effect idempotency and missing live adapters. The server is trusted local stdio software; filesystem-capable tools must not be exposed directly as a public network service.
+
+## VTA + Star: agent knowledge spaces (2026-09-08)
+
+[MCP task engine](docs/VTA_STAR_KNOWLEDGE_SPACES.md) records this surface's responsibilities and acceptance gates. The shared design places FedWiki records, browser-carried Star state, first-contact intent, MCP Trust Tasks, VTA permission enforcement and earned Mages City names in one continuing journey. Status is explicitly partial; follow the note's source and deployment distinctions.
+
+## City invitation and experience entry
+
+Use `experience_route` to select arrival, learning, key custody, casting or collaboration. `city_invitation_draft` prepares a private public-summary candidate in the City's visitor-event shape; publish remains false. See [City entry workflow](docs/CITY_ENTRY.md). These tools neither sign nor send messages, and an invitation does not establish membership, credentials or MyTerms agreement validity.
+
+## Complete capability overview
+
+Begin with `experience_overview`: one source inventory covers the key, journey, invitation, game action, Star orb, VTA pair, agreements/tasks/VRCs, City access and core-artefact proposal. `lib/experience-overview.json` is the source; the City serves its current copy at `/experience-overview.json`. Keep this copy byte-identical when updating capability status. No status here substitutes for live service discovery.

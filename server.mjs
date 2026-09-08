@@ -18,10 +18,14 @@ import path from 'node:path';
 import readline from 'node:readline';
 import * as L from './lib/lattice.mjs';
 import * as B from './lib/bake.mjs';
+import { createSiteContextTools } from './lib/site-context.mjs';
 import * as K from './lib/key.mjs';
 import { render } from './lib/sigil.mjs';
 import { verifyRecord, evolvedSince, didKey, verifyCard } from './lib/sign.mjs';
 import { readTextChunks } from './lib/png.mjs';
+import { createBundle, foldJourney, inspectJourney } from './lib/journey.mjs';
+import { prepareBrowserAction } from './lib/browser-action.mjs';
+import {cityInvitationDraft,experienceRoute,experienceOverview} from './lib/city-entry.mjs';
 
 const VERSION = '0.2.0';
 const VTA = process.env.VTA_MODE === '1';
@@ -31,6 +35,26 @@ const SUPPORTED = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const keyArg = { type: 'object', description: 'A City Key v1 as a JSON object, or a string holding JSON, a sigil PNG (base64 / data: URL), or a path to either.' };
 const keyProp = { anyOf: [keyArg, { type: 'string' }] };
 const TOOLS = [
+  {name:'experience_overview',title:'experience.overview',description:'Start here: source capability inventory for City invitation, Star/key custody, learning, browser actions, agreements and scoped access. Distinguishes implemented local tools from pending live services and design proposals. Not live discovery or authorization.',inputSchema:{type:'object',additionalProperties:false,properties:{}},run:()=>experienceOverview()},
+  {name:'city_invitation_draft',title:'city.invitation.draft',description:'Prepare a PRIVATE draft of a City Portal invitation, offer, request or visitor mark. publish stays false; this does not sign, send, admit, issue a credential or create a MyTerms agreement. Supply only a summary the keeper may choose to make public.',inputSchema:{type:'object',additionalProperties:false,properties:{summary:{type:'string',maxLength:500},action:{type:'string',enum:['mark','invitation','offer','request']},target:{type:'string'}},required:['summary']},run:args=>cityInvitationDraft(args)},
+  {name:'experience_route',title:'experience.route',description:'Find existing site entry points and MCP tool sequences for arrival, learning, key custody, casting and collaboration. Static guidance only; it does not discover live services or transmit your key.',inputSchema:{type:'object',properties:{intent:{type:'string',enum:['arrive','learn','carry','cast','collaborate']}},required:['intent']},run:args=>experienceRoute(args)},
+  ...createSiteContextTools(),
+  { name: 'browser_action_prepare', title: 'browser.action.prepare',
+    description: 'Prepare a short-lived spell/sticker proposal for explicit extension review. Does not connect to a browser, authorize, cast, place, issue credentials or earn mana. Reuse operationId for the same logical action. Do not include secrets in page URLs or target IDs.',
+    inputSchema: {type:'object',additionalProperties:false,properties:{operationId:{type:'string'},subject:{type:'string'},audience:{type:'string'},page:{type:'string'},action:{type:'string',enum:['spell.cast','sticker.place']},target:{type:'string'},contentDigest:{type:'string'},expiresAt:{type:'string'}},required:['operationId','subject','audience','page','action','target','contentDigest','expiresAt']},
+    run: args => prepareBrowserAction(args) },
+  { name: 'journey_start', title: 'journey.start',
+    description: 'Create a PRIVATE journey bundle from a City Key and its complete original packets. Preserves evidence outside the key; no network, signing or credential issuance.',
+    inputSchema: { type: 'object', properties: { key: keyProp, packets: { type: 'array', items: { type: 'object' } }, taskDocuments: { type: 'array', items: { type: 'object' } } }, required: ['key'] },
+    run: ({ key, packets = [], taskDocuments = [] }) => { const p = K.parseKeyInput(key); if (p.error) return p; return createBundle(p.key, packets, taskDocuments); } },
+  { name: 'journey_fold', title: 'journey.fold',
+    description: 'Fold one original artefact packet OR observed Trust Task document into the City Key journey. Returns the private bundle and evolved key with κ/prior. Exact retry is a no-op. Recorded tasks are NOT verified credentials; send only material the holder chose to disclose to this agent.',
+    inputSchema: { type: 'object', properties: { bundle: { type: 'object' }, packet: { type: 'object' }, taskDocument: { type: 'object' } }, required: ['bundle'], oneOf: [{ required: ['packet'], not: { required: ['taskDocument'] } }, { required: ['taskDocument'], not: { required: ['packet'] } }] },
+    run: ({ bundle, packet, taskDocument }) => foldJourney(bundle, { packet, taskDocument }) },
+  { name: 'journey_inspect', title: 'journey.inspect',
+    description: 'Read the City journey evidence inventory: integrity, bearer claims, optional signed key record, and pending checks. Never authorizes issuance. Does not verify Trust Task proofs, freshness or comprehension.',
+    inputSchema: { type: 'object', properties: { bundle: { type: 'object' }, record: { type: 'object' } }, required: ['bundle'] },
+    run: ({ bundle, record }) => inspectJourney(bundle, { record }) },
   { name: 'guide_search', title: 'guide.search',
     description: 'Search the guide (the baked fedwiki federation, 20 sites). Returns an ORDERED WALK of pages — BM25 over the baked lexical index, then link-graph expansion — each step with its site, slug, lattice vertex and PSI element. The agent reads the bake, never the live farm, so a walk is reproducible.',
     inputSchema: { type: 'object', properties: { query: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 24, default: 9 },
