@@ -1,0 +1,5 @@
+fixtures/star-hold-conformance/*.png binary
+fixtures/star-hold-conformance/*.json text eol=lf
+fixtures/star-hold-conformance/*.mjs text eol=lf
+fixtures/star-hold-conformance/*.md text eol=lf
+test/fixtures/*.json text eol=lf

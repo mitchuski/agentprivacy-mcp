@@ -149,7 +149,10 @@ if (process.argv.includes('--check')) {
   for (const [name, bytes] of Object.entries(files)) {
     const p = path.join(OUT, name);
     if (!fs.existsSync(p)) { console.error('missing ' + name); drift++; continue; }
-    if (!fs.readFileSync(p).equals(bytes)) { console.error('drift ' + name); drift++; }
+    const onDisk = fs.readFileSync(p);
+    // text files may come back CRLF after a checkout with autocrlf; compare them normalised, PNGs byte-for-byte
+    const same = name.endsWith('.png') ? onDisk.equals(bytes) : onDisk.toString('utf8').replace(/\r\n/g, '\n') === bytes.toString('utf8');
+    if (!same) { console.error('drift ' + name); drift++; }
   }
   console.log(drift ? `conformance pack: ${drift} file(s) drifted` : `conformance pack: ${Object.keys(files).length} files match disk`);
   process.exit(drift ? 1 : 0);
