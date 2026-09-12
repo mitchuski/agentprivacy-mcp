@@ -1,0 +1,277 @@
+{
+  "schema": "star-hold-conformance/city-key/1",
+  "generatedBy": "agentprivacy-mcp/scripts/star-hold-conformance.mjs",
+  "at": "2026-09-13T00:00:00.000Z",
+  "profile": {
+    "name": "agentprivacy City canonicalization (Law L5)",
+    "rule": "kappa = \"sha256:\" + hex(SHA-256(UTF-8(canonical(key without top-level kappa)))); canonical = object keys sorted recursively (default JS sort, code-unit order), array order preserved, primitives via JSON.stringify, no whitespace; unknown fields stay in the preimage; prior is content; kappa is the only field excluded, and only at the top level",
+    "notJcs": "this is not RFC 8785 JCS: control characters in strings and number edge cases may differ; the credential signature (eddsa-jcs-2022) is a separate layer over JCS",
+    "verdicts": {
+      "authentic": "kappa present and re-derives",
+      "unnamed": "no kappa: the key learns its name",
+      "mismatch": "kappa present and does not re-derive: reject"
+    }
+  },
+  "cases": [
+    {
+      "id": "minimal",
+      "expect": "authentic",
+      "note": "the four base fields, stamped",
+      "canonical": "{\"descriptions\":{\"cool\":\"the protecting side\",\"warm\":\"the projecting side\"},\"name\":\"conformance · minimal\",\"palette\":{\"cool\":\"#4a7fb5\",\"mage\":\"#e0b56a\",\"sword\":\"#8fb3d9\",\"warm\":\"#d9a441\"},\"version\":1}",
+      "kappa": "sha256:d5330ddb43d945230773c7af127fbdbb021e784e2e9e5759b745d6b0c2b81807",
+      "key": {
+        "version": 1,
+        "name": "conformance · minimal",
+        "palette": {
+          "cool": "#4a7fb5",
+          "warm": "#d9a441",
+          "sword": "#8fb3d9",
+          "mage": "#e0b56a"
+        },
+        "descriptions": {
+          "cool": "the protecting side",
+          "warm": "the projecting side"
+        },
+        "kappa": "sha256:d5330ddb43d945230773c7af127fbdbb021e784e2e9e5759b745d6b0c2b81807"
+      }
+    },
+    {
+      "id": "unnamed",
+      "expect": "unnamed",
+      "note": "the same content without a kappa: derived kappa equals the minimal case",
+      "canonical": "{\"descriptions\":{\"cool\":\"the protecting side\",\"warm\":\"the projecting side\"},\"name\":\"conformance · minimal\",\"palette\":{\"cool\":\"#4a7fb5\",\"mage\":\"#e0b56a\",\"sword\":\"#8fb3d9\",\"warm\":\"#d9a441\"},\"version\":1}",
+      "kappa": "sha256:d5330ddb43d945230773c7af127fbdbb021e784e2e9e5759b745d6b0c2b81807",
+      "key": {
+        "version": 1,
+        "name": "conformance · minimal",
+        "palette": {
+          "cool": "#4a7fb5",
+          "warm": "#d9a441",
+          "sword": "#8fb3d9",
+          "mage": "#e0b56a"
+        },
+        "descriptions": {
+          "cool": "the protecting side",
+          "warm": "the projecting side"
+        }
+      }
+    },
+    {
+      "id": "nested-order",
+      "expect": "authentic",
+      "note": "keys inserted out of order at every depth; arrays keep their order; null, booleans, non-integer numbers",
+      "canonical": "{\"descriptions\":{},\"name\":\"conformance · nested order\",\"palette\":{\"cool\":\"#4a7fb5\",\"mage\":\"#e0b56a\",\"sword\":\"#8fb3d9\",\"warm\":\"#d9a441\"},\"version\":1,\"walks\":[{\"slug\":\"z-first\",\"steps\":[3,1,2]},{\"slug\":\"a-second\",\"steps\":[]}],\"zeta\":{\"a\":{\"x\":0,\"y\":\"inner\"},\"b\":[true,null,1.5,\"x\"]}}",
+      "kappa": "sha256:6178c0aa89a8d6b255ab1700234e8a5637e2461c72734ef47031df53854331e4",
+      "key": {
+        "version": 1,
+        "name": "conformance · nested order",
+        "palette": {
+          "warm": "#d9a441",
+          "cool": "#4a7fb5",
+          "mage": "#e0b56a",
+          "sword": "#8fb3d9"
+        },
+        "descriptions": {},
+        "walks": [
+          {
+            "slug": "z-first",
+            "steps": [
+              3,
+              1,
+              2
+            ]
+          },
+          {
+            "slug": "a-second",
+            "steps": []
+          }
+        ],
+        "zeta": {
+          "b": [
+            true,
+            null,
+            1.5,
+            "x"
+          ],
+          "a": {
+            "y": "inner",
+            "x": 0
+          }
+        },
+        "kappa": "sha256:6178c0aa89a8d6b255ab1700234e8a5637e2461c72734ef47031df53854331e4"
+      }
+    },
+    {
+      "id": "full",
+      "expect": "authentic",
+      "note": "the Star Hold runtime fixture key: identity, lit, holds{root,count}, prior; the record and the PNG carriers below are bound to THIS kappa",
+      "canonical": "{\"descriptions\":{},\"holds\":{\"count\":7,\"root\":\"sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257\"},\"identity\":{\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\"},\"lit\":[8,21,63],\"name\":\"bearer\",\"palette\":{\"cool\":\"#82b9dc\",\"mage\":\"#a6d2aa\",\"sword\":\"#c3ace0\",\"warm\":\"#e5bd87\"},\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"version\":1}",
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "key": {
+        "name": "bearer",
+        "version": 1,
+        "palette": {
+          "cool": "#82b9dc",
+          "warm": "#e5bd87",
+          "sword": "#c3ace0",
+          "mage": "#a6d2aa"
+        },
+        "descriptions": {},
+        "lit": [
+          8,
+          21,
+          63
+        ],
+        "identity": {
+          "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+        },
+        "holds": {
+          "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+          "count": 7
+        },
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c"
+      }
+    },
+    {
+      "id": "unknown-field",
+      "expect": "authentic",
+      "note": "full + an additive field a reader has never seen: it survives the round trip and moves kappa (SHAPE ≠ VIEW: content moved, so the name moved)",
+      "canonical": "{\"descriptions\":{},\"holds\":{\"count\":7,\"root\":\"sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257\"},\"identity\":{\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\"},\"lit\":[8,21,63],\"name\":\"bearer\",\"palette\":{\"cool\":\"#82b9dc\",\"mage\":\"#a6d2aa\",\"sword\":\"#c3ace0\",\"warm\":\"#e5bd87\"},\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"unknownAdditive\":{\"kept\":true,\"nested\":{\"a\":\"a\",\"z\":\"z\"},\"order\":[3,1,2]},\"version\":1}",
+      "kappa": "sha256:dddd643ca355b15f1d87886e56a3deb814d7c5b7ed59bbb5c467dd6f93f3acea",
+      "key": {
+        "name": "bearer",
+        "version": 1,
+        "palette": {
+          "cool": "#82b9dc",
+          "warm": "#e5bd87",
+          "sword": "#c3ace0",
+          "mage": "#a6d2aa"
+        },
+        "descriptions": {},
+        "lit": [
+          8,
+          21,
+          63
+        ],
+        "identity": {
+          "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+        },
+        "holds": {
+          "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+          "count": 7
+        },
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "unknownAdditive": {
+          "kept": true,
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "nested": {
+            "z": "z",
+            "a": "a"
+          }
+        },
+        "kappa": "sha256:dddd643ca355b15f1d87886e56a3deb814d7c5b7ed59bbb5c467dd6f93f3acea"
+      },
+      "differsFrom": "full"
+    },
+    {
+      "id": "unchanged-reexport",
+      "expect": "authentic",
+      "note": "full stamped twice: an unchanged re-export is idempotent, the same bytes and the same kappa",
+      "canonical": "{\"descriptions\":{},\"holds\":{\"count\":7,\"root\":\"sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257\"},\"identity\":{\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\"},\"lit\":[8,21,63],\"name\":\"bearer\",\"palette\":{\"cool\":\"#82b9dc\",\"mage\":\"#a6d2aa\",\"sword\":\"#c3ace0\",\"warm\":\"#e5bd87\"},\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"version\":1}",
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "key": {
+        "name": "bearer",
+        "version": 1,
+        "palette": {
+          "cool": "#82b9dc",
+          "warm": "#e5bd87",
+          "sword": "#c3ace0",
+          "mage": "#a6d2aa"
+        },
+        "descriptions": {},
+        "lit": [
+          8,
+          21,
+          63
+        ],
+        "identity": {
+          "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+        },
+        "holds": {
+          "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+          "count": 7
+        },
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c"
+      },
+      "sameAs": "full"
+    },
+    {
+      "id": "mismatch",
+      "expect": "mismatch",
+      "note": "full carrying the minimal case's kappa: derived ≠ stamped, reject",
+      "canonical": "{\"descriptions\":{},\"holds\":{\"count\":7,\"root\":\"sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257\"},\"identity\":{\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\"},\"lit\":[8,21,63],\"name\":\"bearer\",\"palette\":{\"cool\":\"#82b9dc\",\"mage\":\"#a6d2aa\",\"sword\":\"#c3ace0\",\"warm\":\"#e5bd87\"},\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"version\":1}",
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "key": {
+        "name": "bearer",
+        "version": 1,
+        "palette": {
+          "cool": "#82b9dc",
+          "warm": "#e5bd87",
+          "sword": "#c3ace0",
+          "mage": "#a6d2aa"
+        },
+        "descriptions": {},
+        "lit": [
+          8,
+          21,
+          63
+        ],
+        "identity": {
+          "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+        },
+        "holds": {
+          "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+          "count": 7
+        },
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "kappa": "sha256:d5330ddb43d945230773c7af127fbdbb021e784e2e9e5759b745d6b0c2b81807"
+      },
+      "derivedShouldBe": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c"
+    }
+  ],
+  "merkle": {
+    "rule": "leaves sorted once (lexicographic); each round pairs left|right as \"sha256:\" + hex(SHA-256(UTF-8(left + \"|\" + right))) over the prefixed strings; an odd tail is promoted unchanged; empty set → null",
+    "packetsVector": {
+      "leaves": [
+        "sha256:3441cfbb2a89f8fa828c2a5c236503844e772d65559d05a9c036183732a80d24",
+        "sha256:c4580507c7ce0c1cd70c74b51dc2f5a426b081f986e8f761277f1c2d4c85bbc7",
+        "sha256:8f7b26ec8f4858f48c5710decf4f269965b3b6e36112744ecc8e5364ace1d6c5"
+      ],
+      "leavesAre": "sha256 of the UTF-8 strings packet-alpha, packet-beta, packet-gamma",
+      "root": "sha256:07f20f689c8bef2d8a9a2a71d94e7014ea8398cc603b0ff72dadba5c517983d1"
+    },
+    "holdVector": {
+      "refs": [
+        "sha256:733be1e2ffbfa6ef9b0c0111d47313fddb101c1367263e8f236ce36f1b7af2cf",
+        "sha256:7a864abfe64fe3f2d9636e9850368a476eb19b0e4a2b85aa8c10bf57bd57c3f8",
+        "sha256:b5f3b16e512b9b1c0bee5f308bcd580fdebbc97fc7fa6bf5cd57ca4cd0c27e9e",
+        "sha256:ac5014bd87ebfd1bdb27265379f0ead5340301ad9117877961fd638dba4d7c1d",
+        "sha256:a1e3d904b7da3e5c6fecf19aff0651212b1dfcc61dd0dc92e8544e0df2237a37",
+        "sha256:5b9d8717826ff5378ce1b217861de5ec168342638a8ce9048f90b6e6a84cfacb",
+        "sha256:0a424eb5024fe48a684dfb3ffc3a86b82b8f8b7dcc9bb3bce42260f94e5c4d79"
+      ],
+      "refsAre": "sha256 of each retained envelope's bytes (the Star Hold runtime fixture, 7 items)",
+      "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+      "carriedAs": {
+        "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
+        "count": 7
+      }
+    }
+  }
+}

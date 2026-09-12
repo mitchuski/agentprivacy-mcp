@@ -1,0 +1,148 @@
+{
+  "schema": "star-hold-proof-set-fixture/1",
+  "generatedBy": "runtimes/star-hold/test.mjs",
+  "at": "2026-09-11T12:00:00.000Z",
+  "note": "the House did:cid is real; the Ed25519 assertion key is a TEST seed (0x50 × 32), not the House's",
+  "credential": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2"
+    ],
+    "type": [
+      "VerifiableCredential",
+      "HarnessSeatAcceptance"
+    ],
+    "issuer": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+    "validFrom": "2026-09-11T12:00:00.000Z",
+    "credentialSubject": {
+      "seat": "V60",
+      "objective": "disclosure-debt",
+      "accepted": true
+    },
+    "proof": [
+      {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2026-09-11T12:00:00.000Z",
+        "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "jQxvwLQofC4L18xm_unbH7CJ1D1_FfX0rbSYvv_4hYZe4MpEvs_IQ-qvWH7kPPzlrjehJ1S0YI1Nnqv32Rur0A"
+      },
+      {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-jcs-2022",
+        "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-assertion-1",
+        "created": "2026-09-11T12:00:00.000Z",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zdfLqTjmr5DHGpCRUUs9gWdn7AzMwxDgJVqjozGN6QMnqHrmr95GTJBmL2NmqQxe4bNY3otAS8WAQs38cMyDuM4j"
+      }
+    ]
+  },
+  "pins": {
+    "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-assertion-1": "z6MkknhhwAGsRrcTTthPSsBbQtrNX6CMqt4poro5jdP6uCue"
+  },
+  "didDocument": {
+    "didDocument": {
+      "@context": [
+        "https://www.w3.org/ns/did/v1"
+      ],
+      "id": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+      "verificationMethod": [
+        {
+          "id": "#key-1",
+          "controller": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+          "type": "EcdsaSecp256k1VerificationKey2019",
+          "publicKeyJwk": {
+            "kty": "EC",
+            "crv": "secp256k1",
+            "x": "36I0fzCV03sKnV6KgMSEfhn9ON4UXMfviPHDnuDrQKU",
+            "y": "5yACVMxa0sGnOdXTZoa-mNGFaqfEyufdSAZVP-FexM8"
+          }
+        },
+        {
+          "id": "#key-assertion-1",
+          "controller": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+          "type": "Multikey",
+          "publicKeyMultibase": "z6MkknhhwAGsRrcTTthPSsBbQtrNX6CMqt4poro5jdP6uCue"
+        }
+      ],
+      "assertionMethod": [
+        "#key-1",
+        "#key-assertion-1"
+      ]
+    },
+    "didResolutionMetadata": {
+      "contentType": "application/did+ld+json"
+    }
+  },
+  "tampered": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2"
+    ],
+    "type": [
+      "VerifiableCredential",
+      "HarnessSeatAcceptance"
+    ],
+    "issuer": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+    "validFrom": "2026-09-11T12:00:00.000Z",
+    "credentialSubject": {
+      "seat": "V60",
+      "objective": "disclosure-debt",
+      "accepted": false
+    },
+    "proof": [
+      {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2026-09-11T12:00:00.000Z",
+        "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "jQxvwLQofC4L18xm_unbH7CJ1D1_FfX0rbSYvv_4hYZe4MpEvs_IQ-qvWH7kPPzlrjehJ1S0YI1Nnqv32Rur0A"
+      },
+      {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-jcs-2022",
+        "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-assertion-1",
+        "created": "2026-09-11T12:00:00.000Z",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zdfLqTjmr5DHGpCRUUs9gWdn7AzMwxDgJVqjozGN6QMnqHrmr95GTJBmL2NmqQxe4bNY3otAS8WAQs38cMyDuM4j"
+      }
+    ]
+  },
+  "secpOnly": {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2"
+    ],
+    "type": [
+      "VerifiableCredential",
+      "HarnessSeatAcceptance"
+    ],
+    "issuer": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+    "validFrom": "2026-09-11T12:00:00.000Z",
+    "credentialSubject": {
+      "seat": "V60",
+      "objective": "disclosure-debt",
+      "accepted": true
+    },
+    "proof": [
+      {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2026-09-11T12:00:00.000Z",
+        "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-1",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "jQxvwLQofC4L18xm_unbH7CJ1D1_FfX0rbSYvv_4hYZe4MpEvs_IQ-qvWH7kPPzlrjehJ1S0YI1Nnqv32Rur0A"
+      }
+    ]
+  },
+  "expected": {
+    "noPin": "unavailable",
+    "pinned": "valid",
+    "resolved": "valid",
+    "tampered": "invalid",
+    "secpOnly": "unsupported",
+    "wrongPin": "invalid",
+    "signer": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa",
+    "verificationMethod": "did:cid:bagaaiera7vsjlu6oiluzd4enop5j7sfzjbwp2ujudt6uunkz6hhd4lgfe4sa#key-assertion-1",
+    "proofs": [
+      "unsupported",
+      "valid"
+    ]
+  }
+}

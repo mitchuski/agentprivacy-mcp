@@ -22,6 +22,7 @@ import { createSiteContextTools } from './lib/site-context.mjs';
 import * as K from './lib/key.mjs';
 import { render } from './lib/sigil.mjs';
 import { verifyRecord, evolvedSince, didKey, verifyCard } from './lib/sign.mjs';
+import { verifyHold, projectHold } from './lib/hold.mjs';
 import { readTextChunks } from './lib/png.mjs';
 import { createBundle, foldJourney, inspectJourney } from './lib/journey.mjs';
 import { prepareBrowserAction } from './lib/browser-action.mjs';
@@ -125,6 +126,19 @@ const TOOLS = [
     description: 'Verify an AgentCard as agentprivacy /ceremony signs it (ed25519 over the card payload; participantId = ap-<16 hex of the public key>). Returns participantId, did:key, displayName, trustTier, Drake Orb tier. This is the identity mages.city admits with; the board never re-issues it.',
     inputSchema: { type: 'object', properties: { card: { anyOf: [{ type: 'object' }, { type: 'string' }], description: 'the AgentCard JSON (object, JSON text, or a path)' } }, required: ['card'] },
     run: ({ card }) => { let c = card; if (typeof c === 'string') { const s = c.trim(); try { c = s.startsWith('{') ? JSON.parse(s) : JSON.parse(fs.readFileSync(s, 'utf8')); } catch (e) { return { error: 'card must be JSON or a path to it' }; } } return verifyCard(c); } },
+  { name: 'hold_verify', title: 'hold.verify (public)',
+    description: 'Verify a Star Hold (kind agentprivacy.star-hold/1): the sidecar of retained signed envelopes beside a City Key. Re-derives every item ref from its retained bytes and the Merkle root from the refs (the packets rule), checks the bearer\'s ed25519 signature over {kind, bearer, kappa, root, count, at}, and re-verifies EVERY item by its profile — OpenVTC eddsa-jcs-2022 Data Integrity proofs (trust tasks, DTG VRCs; did:key resolved locally, other methods report unavailable), agentprivacy.vta/1 records, agentprivacy.vrc/1 bilateral records; declared suites report unsupported. With the key, also checks the Hold belongs to it (κ re-derived; holds{root,count} agree). Returns per-item states, never a single verdict for the whole Hold, and never grants anything. Holds no secret. With `project`, diagnostic mode includes a nested projection; outer diagnostic items still include signer identifiers. Use responseMode=projection for only the projection, with fresh states/measurements and no diagnostic wrapper. Projection retains bearer and linkable refs; it is not unlinkability or authorization.',
+    inputSchema: { type: 'object', properties: { hold: { anyOf: [{ type: 'object' }, { type: 'string' }], description: 'the Hold (object, JSON text, or a path)' }, key: keyProp, project: { type: 'boolean', description: 'in diagnostic mode, also include a nested fresh projection; does not remove outer diagnostics' }, responseMode: { type: 'string', enum: ['diagnostic', 'projection'], description: 'diagnostic (default) returns verification details; projection returns only the projection or a bounded error, regardless of project' } }, required: ['hold'] },
+    run: ({ hold, key, project, responseMode = 'diagnostic' }) => {
+      if (!['diagnostic', 'projection'].includes(responseMode)) return { error: 'responseMode must be diagnostic or projection' };
+      let h = hold; if (typeof h === 'string') { const s = h.trim(); try { h = s.startsWith('{') ? JSON.parse(s) : JSON.parse(fs.readFileSync(s, 'utf8')); } catch { return { error: 'hold must be JSON or a path to it' }; } }
+      let k = null; if (key != null) { const p = K.parseKeyInput(key); if (p.error) return p; k = p.key; }
+      if (responseMode === 'projection') {
+        try { return projectHold(h, { key: k }); }
+        catch { return { error: 'invalid Hold structure; projection not returned' }; }
+      }
+      const v = verifyHold(h, { key: k });
+      return project && v.ok ? { ...v, projection: projectHold(h, { key: k }) } : v; } },
 ];
 if (!VTA) TOOLS.push({ name: 'compare_plain', title: 'compare.plain (development only)',
   description: 'The ∩ of two keys (walked + lit vertices, shared PSI elements) computed IN THE OPEN by reading both keys. Development only: Rung 3 replaces it with DH-PSI, and it is hidden when VTA_MODE=1.',

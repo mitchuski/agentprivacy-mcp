@@ -1,0 +1,22 @@
+{
+  "schema": "star-hold-conformance/bound-signer-challenge/1",
+  "generatedBy": "agentprivacy-mcp/scripts/star-hold-conformance.mjs",
+  "at": "2026-09-13T00:00:00.000Z",
+  "rule": "hearthold PR #92 challengePreimage = canonicalCityJSON({nonce, kappa, audience, exp}) — the same City profile; the response is an Ed25519 signature (lowercase hex) over the UTF-8 preimage by the key the record binds; a verifier checks the record first, then kappa equality, then expiry, then the signature; the nonce is single-use on the Warden",
+  "record": "vta-record.fixture.json#test-full-key",
+  "challenge": {
+    "nonce": "34ca8b8b1b1892102bf0d2d54ea9997e194290dd572847002a1c499a5cc397de",
+    "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+    "audience": "hearthold:mages.archon.social",
+    "exp": 1800000060000
+  },
+  "preimage": "{\"audience\":\"hearthold:mages.archon.social\",\"exp\":1800000060000,\"kappa\":\"sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c\",\"nonce\":\"34ca8b8b1b1892102bf0d2d54ea9997e194290dd572847002a1c499a5cc397de\"}",
+  "preimageSha256": "e6071c935b7acaa4da7314c90e3278d8ca392165ead2889e63da9ee9959ebe30",
+  "responseSigHex": "1444ed8342b26f159cbe59f262af022417239fa5593b71cb1114e530a98f2d67efc651acba83e8de4c9fc39fc2dba0fd9b189c8310722f91a248b81f0f04280f",
+  "expect": {
+    "at": 1800000000000,
+    "verdict": "ok",
+    "afterExp": "expired",
+    "otherKappa": "kappa-mismatch"
+  }
+}

@@ -11,7 +11,7 @@
     "list": "node server.mjs --list",
     "generate:journey-browser": "node scripts/build-browser-journey.mjs",
     "test:journey-browser": "node --test test/browser-journey.test.mjs",
-    "test": "node test/canon.test.mjs && node test/bridge.test.mjs && node test/swordsman.test.mjs && node --test test/journey.test.mjs test/browser-action.test.mjs test/browser-action-runtime.test.mjs test/city-entry.test.mjs && node bin/walk-demo.mjs --sign"
+    "test": "node test/canon.test.mjs && node test/bridge.test.mjs && node test/swordsman.test.mjs && node --test test/journey.test.mjs test/browser-action.test.mjs test/browser-action-runtime.test.mjs test/city-entry.test.mjs test/hold.test.mjs test/hold-projection-fix.test.mjs test/proof-set.test.mjs test/star-hold-conformance.test.mjs test/star-cli.test.mjs test/star-recipient.test.mjs && node bin/walk-demo.mjs --sign"
   },
   "engines": {
     "node": ">=18"

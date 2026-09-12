@@ -1,0 +1,43 @@
+{
+  "schema": "star-hold-conformance/png-carrier/1",
+  "generatedBy": "agentprivacy-mcp/scripts/star-hold-conformance.mjs",
+  "at": "2026-09-13T00:00:00.000Z",
+  "rule": "a City Key travels inside its sigil PNG. Carrier A (soulbis /star, /lattice, /sigil, the Swordsman): a tEXt chunk before IEND, keyword cityKey, text = base64(JSON.stringify(key)). Carrier B (the guide star chart keepsake): an iTXt chunk, keyword citykey, uncompressed, text = the JSON itself. A signed sigil adds tEXt cityKeySig = base64(JSON.stringify(record)). Readers accept both carriers; on import re-derive kappa from what the image carried (Law L5). Pixels are not part of kappa.",
+  "pixels": "16×16 RGBA, r = x·16, g = y·16, b = (x xor y)·16, a = 255, filter 0, zlib level 9 — deterministic so the file digests below are reproducible",
+  "files": [
+    {
+      "file": "city-key.fixture.png",
+      "carrier": "A: tEXt cityKey (base64 JSON)",
+      "chunks": [
+        "cityKey"
+      ],
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "sameKeyAs": "city-key.fixture.json#full",
+      "sha256": "2ec05d89b5fd969c867dcfcd4d0e6073e9f69568bce7698699497b53e71c9244",
+      "bytes": 1304
+    },
+    {
+      "file": "city-key-signed.fixture.png",
+      "carrier": "A + tEXt cityKeySig (base64 JSON record)",
+      "chunks": [
+        "cityKey",
+        "cityKeySig"
+      ],
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "record": "vta-record.fixture.json#test-full-key",
+      "sha256": "1020071ae6c28c2fcea1c0749bc1933f3c88172ac35f75e28b05e5cc9ecd2e3a",
+      "bytes": 2083
+    },
+    {
+      "file": "city-key-itxt.fixture.png",
+      "carrier": "B: iTXt citykey (raw JSON)",
+      "chunks": [
+        "citykey"
+      ],
+      "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+      "sameKeyAs": "city-key.fixture.json#full",
+      "sha256": "1f32e013a52d53386e3c2fcd4159ffb227469e34dc470d7c42258d757303bfd1",
+      "bytes": 1140
+    }
+  ]
+}

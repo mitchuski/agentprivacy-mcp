@@ -29,6 +29,7 @@ import { kappaOf, verifyKappa, stamp } from '../lib/kappa.mjs';
 import { isCityKey, parseKeyInput } from '../lib/key.mjs';
 import { VTA_KIND, pubFromSeed, participantId, didKey, sign, recordBytes, verifyRecord, isHex } from '../lib/sign.mjs';
 import { embedKey, withTextChunk } from '../lib/png.mjs';
+import { makeItem, holdFor, verifyHold, projectHold, PROFILES } from '../lib/hold.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const HOME = path.join(process.env.AGENTPRIVACY_HOME || path.join(os.homedir(), '.agentprivacy'), 'swordsman');
@@ -111,6 +112,45 @@ function publish(input) {
     residentPage: 'proofs', note: 'paste proofsPageItem onto <name>.mages.city/proofs — the board reads cityKey.vta and verifies it with lib/sign.mjs verifyRecord; liveness = evolved_since(t) over signedAt' };
 }
 
+// ---- the Hold: what this Star has been signed into ----------------------------------------
+// $AGENTPRIVACY_HOME/swordsman/hold.json — the bearer's sidecar of retained signed envelopes
+// (agentprivacy.star-hold/1). Private; the key carries only holds{root,count}. The Star is
+// not a wallet: it aggregates many keys (the bearer's, the pairwise ones, the counterparts')
+// and every item is a signed relationship or a signed act toward one — so the verb is `relate`.
+const F_HOLD = path.join(HOME, 'hold.json');
+const readHold = () => fs.existsSync(F_HOLD) ? readJSON(F_HOLD) : null;
+function relate({ key, envelope, profile, role = 'counterpart', subject, issued, expires }) {
+  const id = identity(), P = policy();
+  if (!PROFILES[profile]) return { refused: `unknown profile ${profile}; known: ${Object.keys(PROFILES).join(', ')}` };
+  const p = parseKeyInput(key); if (p.error) return { refused: p.error };
+  let k = p.key;
+  if (!isCityKey(k)) return { refused: 'not a City Key v1' };
+  const v = verifyKappa(k); if (v.verdict === 'mismatch') return { refused: `κ mismatch: stamped ${v.stamped.slice(0, 23)}… re-derives to ${v.derived.slice(0, 23)}…` };
+  if (v.verdict === 'unlabelled') k = stamp(k);
+  if (P.signOnlyOwnBearer && k.identity?.publicKeyHex && k.identity.publicKeyHex.toLowerCase() !== id.publicKeyHex) return { refused: 'a Swordsman relates only into its bearer\'s key' };
+  let env = envelope; if (typeof env === 'string' && !env.trim().startsWith('{') && fs.existsSync(env)) env = fs.readFileSync(env);
+  const item = makeItem({ envelope: env, profile, role, subject, issued, expires });
+  // policy: an invalid signature never enters the Hold; a declared (unsupported) profile may, and says so
+  if (item.verification.state === 'invalid') return { refused: `the envelope does not verify (${item.verification.reason}) — nothing entered the Hold` };
+  if (item.verification.state === 'unsupported' && P.holdAllowDeclaredProfiles === false) return { refused: `profile ${profile} is declared, not verified, and this policy refuses declared items` };
+  if (role === 'self' && item.signer && item.signer.did !== id.did) return { refused: `a self item must be signed by this bearer (${id.did}), not ${item.signer.did}` };
+  const current = readHold();
+  const items = [...(current?.items ?? [])];
+  if (items.some((i) => i.ref === item.ref)) return { refused: `already held: ${item.ref.slice(0, 23)}…` };
+  items.push(item);
+  // the key carries holds{root,count}; its κ moves; the Hold names the κ that carries it (holdFor)
+  const base = { ...k }; delete base.holds; if (current?.kappa && !base.prior) base.prior = current.kappa;
+  const { key: next, hold } = holdFor({ seedHex: id.seedHex, key: base, items });
+  fs.writeFileSync(F_HOLD, JSON.stringify(hold, null, 1));
+  return { key: next, hold: projectHold(hold), item: { ref: item.ref, profile: item.profile, role: item.role, state: item.verification.state, signer: item.signer?.did ?? null, signed: item.signed },
+    note: 'the key now carries holds{root,count} and a new κ — sign that evolution with key_sign (prior chains) so the community sees the count; the items stay here' };
+}
+function showHold({ full = false } = {}) {
+  const h = readHold(); if (!h) return { held: 0, note: 'nothing related yet — relate an envelope with hold_relate' };
+  const v = verifyHold(h);
+  return full ? { hold: h, verification: v } : { ...projectHold(h), verification: { ok: v.ok, allValid: v.allValid, root: v.root, budget: v.budget, items: v.items.map((i) => ({ ref: i.ref, state: i.state })) } };
+}
+
 // ---- MCP over stdio (write tools) --------------------------------------------------------
 const keyProp = { anyOf: [{ type: 'object' }, { type: 'string' }], description: 'City Key JSON, or a string holding JSON / a sigil PNG (base64) / a path' };
 const TOOLS = [
@@ -126,6 +166,11 @@ const TOOLS = [
       if (out) fs.writeFileSync(out, buf); return { bytes: buf.length, wrote: out ? path.resolve(out) : null, _image: buf.toString('base64') }; } },
   { name: 'policy_show', title: 'policy.show', description: 'The fixed policy this Swordsman enforces, and the ledger head. Read-only.',
     inputSchema: { type: 'object', properties: {} }, run: () => ({ policy: policy(), ledgerHead: head(), ledgerLength: ledger().length, identity: publicIdentity(identity()) }) },
+  { name: 'hold_relate', title: 'hold.relate (the Star relates)', description: 'Relate a signed envelope into this bearer\'s Hold (agentprivacy.star-hold/1, kept here beside the identity): a counterpart\'s DTG VRC or OpenVTC trust task (eddsa-jcs-2022), an agentprivacy.vta/1 record, a Rung 5 bilateral VRC, or a declared profile (secp256k1, ed25519-2020, webauthn — carried, marked unsupported, never called valid). The envelope is verified BEFORE it enters; an invalid signature is refused. Returns the key carrying holds{root,count} under a new κ (sign that evolution with key_sign), the Hold\'s projection (refs and states, never envelopes), and the item\'s measured bytes. The Star is not a wallet: it aggregates many keys and every item is a relationship.',
+    inputSchema: { type: 'object', properties: { key: keyProp, envelope: { anyOf: [{ type: 'object' }, { type: 'string' }], description: 'the signed envelope — JSON, JSON text, or a path' }, profile: { type: 'string', enum: Object.keys(PROFILES) }, role: { type: 'string', enum: ['self', 'counterpart', 'issuer', 'witness'] }, subject: { type: 'string' }, issued: { type: 'string' }, expires: { type: 'string' } }, required: ['key', 'envelope', 'profile'] },
+    run: (a) => relate(a) },
+  { name: 'hold_show', title: 'hold.show', description: 'The Hold as its bearer sees it: by default the projection (refs, profiles, roles, measured bytes, re-verified states — no envelopes, no counterpart DIDs); with full=true the retained envelopes too (this is the bearer\'s own process; nothing leaves it).',
+    inputSchema: { type: 'object', properties: { full: { type: 'boolean' } } }, run: (a) => showHold(a || {}) },
 ];
 const byName = Object.fromEntries(TOOLS.map(t => [t.name, t]));
 const send = m => process.stdout.write(JSON.stringify(m) + '\n');

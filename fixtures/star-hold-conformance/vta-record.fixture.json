@@ -1,0 +1,123 @@
+{
+  "schema": "star-hold-conformance/vta-record/1",
+  "generatedBy": "agentprivacy-mcp/scripts/star-hold-conformance.mjs",
+  "at": "2026-09-13T00:00:00.000Z",
+  "rule": {
+    "kind": "agentprivacy.vta/1",
+    "preimage": "canonical({kind, publicKeyHex, kappa, prior, at, walks, vrcs}) under the City profile above — defaults prior→null, walks→0, vrcs→[]; keys sorted; no whitespace; sig, did and participantId are not in the preimage",
+    "signature": "Ed25519 (RFC 8032, pure Ed25519, no prehash) over the UTF-8 bytes of the preimage; sig = 64 bytes as lowercase hex; verified with node:crypto (OpenSSL) here and in the mages.city chip with WebCrypto",
+    "encodings": "publicKeyHex = 32 bytes lowercase hex; case is preimage-significant: uppercase hex changes the signed bytes and the signature fails (the uppercase-hex case); at is required (an absent at would canonicalize to the token undefined, which is not JSON); did must equal did:key:z + base58btc(0xed 0x01 ‖ publicKey) when present; participantId must equal \"ap-\" + the first 16 hex characters when present",
+    "origin": "agentprivacy-mcp lib/sign.mjs (recordBytes, sign, verifyRecord) — the Swordsman signs with it; lib/kappa.mjs canonicalJSON"
+  },
+  "testKey": {
+    "label": "TEST KEY — a published seed, never a bearer; Ed25519 seed → public key is deterministic",
+    "seedHex": "0101010101010101010101010101010101010101010101010101010101010101",
+    "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+    "did": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+    "participantId": "ap-8a88e3dd7409f195"
+  },
+  "records": [
+    {
+      "id": "test-full-key",
+      "expect": "valid",
+      "note": "signed by the test key over the full City Key's kappa (city-key.fixture.json#full), prior = that key's prior",
+      "preimage": "{\"at\":\"2026-09-13T00:00:00.000Z\",\"kappa\":\"sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c\",\"kind\":\"agentprivacy.vta/1\",\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"vrcs\":[],\"walks\":0}",
+      "preimageSha256": "9575dab299d727c8f77116028a8d38e5b16857a6a1ccbf11da85597af56d012b",
+      "ourVerdict": "valid",
+      "record": {
+        "kind": "agentprivacy.vta/1",
+        "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+        "participantId": "ap-8a88e3dd7409f195",
+        "did": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "at": "2026-09-13T00:00:00.000Z",
+        "walks": 0,
+        "vrcs": [],
+        "sig": "e779a17f98e3f38ea69c6c7a788fe555b23366cfd2e4c751383d8b287672885319b3bf53fc84239de9f541d458df64ff41a52248c4eef8cd8b3c9040bf9bc003"
+      },
+      "signedKey": "city-key.fixture.json#full"
+    },
+    {
+      "id": "farm-soulbis",
+      "expect": "valid",
+      "note": "a record a City resident publishes on its proofs page (soulbis.mages.localhost, signed 2026-09-05); public data — the bearer public key, the kappa, the prior, the count of walks; never the key or the walk",
+      "preimage": "{\"at\":\"2026-09-05T12:00:00.000Z\",\"kappa\":\"sha256:e710114a3b160d6057c87cbbfcaecdd2281528ff04c070d95ebc6dae11e5e3e1\",\"kind\":\"agentprivacy.vta/1\",\"prior\":\"sha256:d6f99b52e993dcc225641f86dabe421e0135ad361e493836ce8af5116890e429\",\"publicKeyHex\":\"eb067045a4119501139b647f88c7499b11d5d60fc995c544a548d5e6236aa8cd\",\"vrcs\":[],\"walks\":3}",
+      "preimageSha256": "ab35373b66d8461bb0a79bf2f7f8e2189d5bd2631715459bff075da6cf69dd75",
+      "ourVerdict": "valid",
+      "record": {
+        "kind": "agentprivacy.vta/1",
+        "publicKeyHex": "eb067045a4119501139b647f88c7499b11d5d60fc995c544a548d5e6236aa8cd",
+        "participantId": "ap-eb067045a4119501",
+        "did": "did:key:z6MkvGhYnFXQXNt83wghHU5mBcEZdYbdo6wtdFHy2YSMmLAQ",
+        "kappa": "sha256:e710114a3b160d6057c87cbbfcaecdd2281528ff04c070d95ebc6dae11e5e3e1",
+        "prior": "sha256:d6f99b52e993dcc225641f86dabe421e0135ad361e493836ce8af5116890e429",
+        "at": "2026-09-05T12:00:00.000Z",
+        "walks": 3,
+        "vrcs": [],
+        "sig": "5f965c230d18618f5aa5b785d70a42eac3e6bec8c28f36fd3e5fd130950a61013bab471e420854e7b776ea414e6e3c362a03d0d827bc649bd09cacbe04731501"
+      },
+      "source": "mages.city farm · soulbis.mages.localhost/proofs · cityKey.vta"
+    },
+    {
+      "id": "uppercase-hex",
+      "expect": "invalid",
+      "note": "the test record with publicKeyHex and sig uppercased: hex case is preimage-significant, so the signature does not verify — a conforming verifier rejects, it does not normalise",
+      "preimage": "{\"at\":\"2026-09-13T00:00:00.000Z\",\"kappa\":\"sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c\",\"kind\":\"agentprivacy.vta/1\",\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"publicKeyHex\":\"8A88E3DD7409F195FD52DB2D3CBA5D72CA6709BF1D94121BF3748801B40F6F5C\",\"vrcs\":[],\"walks\":0}",
+      "preimageSha256": "f3618d68f32d52d571fcb9f5e954c0b603a70bf2abc8e1616d48c735f7cc2e5b",
+      "ourVerdict": "invalid",
+      "record": {
+        "kind": "agentprivacy.vta/1",
+        "publicKeyHex": "8A88E3DD7409F195FD52DB2D3CBA5D72CA6709BF1D94121BF3748801B40F6F5C",
+        "participantId": "ap-8a88e3dd7409f195",
+        "did": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "at": "2026-09-13T00:00:00.000Z",
+        "walks": 0,
+        "vrcs": [],
+        "sig": "E779A17F98E3F38EA69C6C7A788FE555B23366CFD2E4C751383D8B287672885319B3BF53FC84239DE9F541D458DF64FF41A52248C4EEF8CD8B3C9040BF9BC003"
+      }
+    },
+    {
+      "id": "tampered-walks",
+      "expect": "invalid",
+      "note": "walks changed after signing",
+      "preimage": "{\"at\":\"2026-09-13T00:00:00.000Z\",\"kappa\":\"sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c\",\"kind\":\"agentprivacy.vta/1\",\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"vrcs\":[],\"walks\":1}",
+      "preimageSha256": "b8f466acfaecae88db2291138fb9e0f6bd8d708f21f24fe092fb7ade256ebeee",
+      "ourVerdict": "invalid",
+      "record": {
+        "kind": "agentprivacy.vta/1",
+        "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+        "participantId": "ap-8a88e3dd7409f195",
+        "did": "did:key:z6Mkon3Necd6NkkyfoGoHxid2znGc59LU3K7mubaRcFbLfLX",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "at": "2026-09-13T00:00:00.000Z",
+        "walks": 1,
+        "vrcs": [],
+        "sig": "e779a17f98e3f38ea69c6c7a788fe555b23366cfd2e4c751383d8b287672885319b3bf53fc84239de9f541d458df64ff41a52248c4eef8cd8b3c9040bf9bc003"
+      }
+    },
+    {
+      "id": "did-mismatch",
+      "expect": "invalid",
+      "note": "a did that does not derive from publicKeyHex: rejected before the signature is checked",
+      "preimage": "{\"at\":\"2026-09-13T00:00:00.000Z\",\"kappa\":\"sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c\",\"kind\":\"agentprivacy.vta/1\",\"prior\":\"sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f\",\"publicKeyHex\":\"8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c\",\"vrcs\":[],\"walks\":0}",
+      "preimageSha256": "9575dab299d727c8f77116028a8d38e5b16857a6a1ccbf11da85597af56d012b",
+      "ourVerdict": "invalid",
+      "record": {
+        "kind": "agentprivacy.vta/1",
+        "publicKeyHex": "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+        "participantId": "ap-8a88e3dd7409f195",
+        "did": "did:key:z6Mko9hTggMwjSTEaJaPUfE6tqcy2xvU6BnNq3e3o8qVBiyH",
+        "kappa": "sha256:eb9c3e2b3455d183f28eeffff869f7f0fab124e71459cd84cb3aabd30392745c",
+        "prior": "sha256:302411ad920999c76df8972ba0f74bf24e83e04f7f6b33b28687618de4f6e56f",
+        "at": "2026-09-13T00:00:00.000Z",
+        "walks": 0,
+        "vrcs": [],
+        "sig": "e779a17f98e3f38ea69c6c7a788fe555b23366cfd2e4c751383d8b287672885319b3bf53fc84239de9f541d458df64ff41a52248c4eef8cd8b3c9040bf9bc003"
+      }
+    }
+  ]
+}
