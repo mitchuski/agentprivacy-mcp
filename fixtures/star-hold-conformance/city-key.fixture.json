@@ -271,7 +271,22 @@
       "carriedAs": {
         "root": "sha256:909e1f2ece123981eae24d8d63273904fa2946e6e63af0d87cd4d59f7ab84257",
         "count": 7
-      }
+      },
+      "tree": "legacy (agentprivacy.star-hold/1)"
+    },
+    "holdTreeV2": {
+      "rule": "leaves = the refs as UTF-8, sorted, unique; leaf = SHA-256(0x00 ‖ leaf); node = SHA-256(0x01 ‖ left ‖ right) over raw 32-byte digests; an odd last node pairs with itself; root written \"sha256:\" + hex",
+      "refs": [
+        "sha256:733be1e2ffbfa6ef9b0c0111d47313fddb101c1367263e8f236ce36f1b7af2cf",
+        "sha256:7a864abfe64fe3f2d9636e9850368a476eb19b0e4a2b85aa8c10bf57bd57c3f8",
+        "sha256:b5f3b16e512b9b1c0bee5f308bcd580fdebbc97fc7fa6bf5cd57ca4cd0c27e9e",
+        "sha256:ac5014bd87ebfd1bdb27265379f0ead5340301ad9117877961fd638dba4d7c1d",
+        "sha256:a1e3d904b7da3e5c6fecf19aff0651212b1dfcc61dd0dc92e8544e0df2237a37",
+        "sha256:5b9d8717826ff5378ce1b217861de5ec168342638a8ce9048f90b6e6a84cfacb",
+        "sha256:0a424eb5024fe48a684dfb3ffc3a86b82b8f8b7dcc9bb3bce42260f94e5c4d79"
+      ],
+      "root": "sha256:487a4a0bbe04c50e6ab7157990cf5b133a2c10bc1437dd03201f3fbd053212c0",
+      "appliesTo": "agentprivacy.star-hold/2"
     }
   }
 }

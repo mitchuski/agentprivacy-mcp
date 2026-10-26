@@ -12,6 +12,7 @@
 // The test key is a PUBLISHED seed (0x01 × 32). It is never a bearer. The farm
 // record is public data — what a VTA publishes on its proofs page.
 import fs from 'node:fs';
+import { holdRootV2 } from '../lib/merkle-kappa.mjs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
@@ -57,7 +58,10 @@ const cityKey = {
   merkle: {
     rule: 'leaves sorted once (lexicographic); each round pairs left|right as "sha256:" + hex(SHA-256(UTF-8(left + "|" + right))) over the prefixed strings; an odd tail is promoted unchanged; empty set → null',
     packetsVector: { leaves: ['packet-alpha', 'packet-beta', 'packet-gamma'].map((s) => 'sha256:' + sha256hex(s)), leavesAre: 'sha256 of the UTF-8 strings packet-alpha, packet-beta, packet-gamma', root: merkleRoot(['packet-alpha', 'packet-beta', 'packet-gamma'].map((s) => 'sha256:' + sha256hex(s))) },
-    holdVector: { refs: runtimeFixture.hold.items.map((i) => i.ref), refsAre: 'sha256 of each retained envelope\'s bytes (the Star Hold runtime fixture, 7 items)', root: merkleRoot(runtimeFixture.hold.items.map((i) => i.ref)), carriedAs: full.holds },
+    holdVector: { refs: runtimeFixture.hold.items.map((i) => i.ref), refsAre: 'sha256 of each retained envelope\'s bytes (the Star Hold runtime fixture, 7 items)', root: merkleRoot(runtimeFixture.hold.items.map((i) => i.ref)), carriedAs: full.holds, tree: 'legacy (agentprivacy.star-hold/1)' },
+    // agentprivacy.star-hold/2 roots its items with the κ registry tree (kappa-core merkle.rs)
+    holdTreeV2: { rule: 'leaves = the refs as UTF-8, sorted, unique; leaf = SHA-256(0x00 ‖ leaf); node = SHA-256(0x01 ‖ left ‖ right) over raw 32-byte digests; an odd last node pairs with itself; root written "sha256:" + hex',
+      refs: runtimeFixture.hold.items.map((i) => i.ref), root: holdRootV2(runtimeFixture.hold.items.map((i) => i.ref)), appliesTo: 'agentprivacy.star-hold/2' },
   },
 };
 

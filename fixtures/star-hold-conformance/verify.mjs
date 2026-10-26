@@ -22,6 +22,9 @@ const canonical = (v) => v === null || typeof v !== 'object' ? JSON.stringify(v)
 const sha256hex = (s) => crypto.createHash('sha256').update(s, 'utf8').digest('hex');
 const kappaOf = (key) => { const c = { ...key }; delete c.kappa; return 'sha256:' + sha256hex(canonical(c)); };
 const verdictOf = (key) => { const d = kappaOf(key); return typeof key.kappa !== 'string' ? 'unnamed' : d === key.kappa ? 'authentic' : 'mismatch'; };
+// the κ registry tree, used by agentprivacy.star-hold/2
+const shaB = (...b) => crypto.createHash('sha256').update(Buffer.concat(b)).digest();
+const kappaTreeRoot = (refs) => { let level = [...refs].sort().map((r) => shaB(Buffer.from([0]), Buffer.from(r, 'utf8'))); if (!level.length) return null; while (level.length > 1) { const next = []; for (let i = 0; i < level.length; i += 2) next.push(shaB(Buffer.from([1]), level[i], level[i + 1] ?? level[i])); level = next; } return 'sha256:' + level[0].toString('hex'); };
 const merkleRoot = (leaves) => { let level = [...leaves].sort(); if (!level.length) return null; while (level.length > 1) { const next = []; for (let i = 0; i < level.length; i += 2) next.push(i + 1 < level.length ? 'sha256:' + sha256hex(level[i] + '|' + level[i + 1]) : level[i]); level = next; } return level[0]; };
 
 // ---- Ed25519 + did:key --------------------------------------------------------
@@ -70,6 +73,7 @@ for (const c of ck.cases) {
 }
 check('unnamed derives the minimal κ', kappaOf(byId.unnamed.key) === byId.minimal.kappa);
 check('merkle packets vector', merkleRoot(ck.merkle.packetsVector.leaves) === ck.merkle.packetsVector.root);
+if (ck.merkle.holdTreeV2) check('star-hold/2 κ-tree vector', kappaTreeRoot(ck.merkle.holdTreeV2.refs) === ck.merkle.holdTreeV2.root);
 check('merkle hold vector = key.holds.root, count matches', merkleRoot(ck.merkle.holdVector.refs) === ck.merkle.holdVector.root && byId.full.key.holds.root === ck.merkle.holdVector.root && byId.full.key.holds.count === ck.merkle.holdVector.refs.length);
 
 // ---- 2 · the record --------------------------------------------------------------

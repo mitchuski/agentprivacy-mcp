@@ -3,6 +3,7 @@
 // real evolved key + Swordsman-shaped record round-trips, and the OpenVTC DI
 // suite verifies through the same path. Run: node --test test/hold.test.mjs
 import { test } from 'node:test';
+import { holdRootV2, holdProofV2, holdVerifyV2, hashNode, hashLeaf } from '../lib/merkle-kappa.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -48,7 +49,9 @@ test('a Hold built from an evolved City Key and a Swordsman-shaped record round-
   assert.deepEqual(Object.keys(k2.holds).sort(), ['count', 'root']);
   assert.equal(k2.prior, k1.kappa);
   assert.equal(hold.kappa, k2.kappa);
-  assert.equal(hold.root, merkleRoot([item0.ref, item1.ref]));
+  assert.equal(hold.kind, 'agentprivacy.star-hold/2');
+  assert.equal(hold.root, holdRootV2([item0.ref, item1.ref]), 'a /2 Hold roots its refs with the κ registry tree');
+  assert.notEqual(hold.root, merkleRoot([item0.ref, item1.ref]), 'and not with the legacy packets rule');
   const v = verifyHold(hold, { key: k2, now: NOW });
   assert.equal(v.ok, true, v.why.join('; '));
   assert.equal(v.allValid, true);
@@ -75,4 +78,31 @@ test('the projection carries refs and states only; DI verify distinguishes inval
   assert.equal(didKeyPub(doc.proof.verificationMethod.split('#')[0]).length, 64);
   assert.equal(verifyEnvelope('vc/ed25519-2020', Buffer.from('{}')).state, 'unsupported');
   assert.equal(Object.values(PROFILES).filter((f) => f === 'declared').length, 3);
+});
+
+test('the /1 runtime fixture still verifies, flagged legacy; /2 inclusion proofs verify and an interior node cannot pass as a ref', () => {
+  const f = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+  assert.equal(f.hold.kind, 'agentprivacy.star-hold/1');
+  const v = verifyHold(f.hold, { key: f.key, now: new Date(f.at) });
+  assert.equal(v.ok, true, v.why.join('; '));
+  assert.equal(v.legacy, true);
+  assert.equal(v.tree, 'legacy-packets/1');
+  const refs = f.hold.items.map((i) => i.ref);
+  const root = holdRootV2(refs);
+  for (const r of refs) assert.equal(holdVerifyV2(root, r, holdProofV2(refs, r)), true);
+  // the interior node over the first two sorted leaves, offered as a ref with the rest of a path: refused
+  const sorted = [...refs].sort();
+  const node = hashNode(hashLeaf(Buffer.from(sorted[0])), hashLeaf(Buffer.from(sorted[1])));
+  const shortened = holdProofV2(refs, sorted[0]).slice(1);
+  assert.equal(holdVerifyV2(root, 'sha256:' + node.toString('hex'), shortened), false);
+  assert.throws(() => holdRootV2([refs[0], refs[0]]), /duplicate-item/);
+});
+
+test('canonical JSON refuses values that are not JSON (O12b), and a record carrying one is invalid, never a crash', async () => {
+  const { canonicalJSON } = await import('../lib/kappa.mjs');
+  for (const v of [NaN, Infinity, undefined, [undefined], { a: undefined }, { k: NaN }]) assert.throws(() => canonicalJSON(v), /not a JSON value/);
+  assert.equal(canonicalJSON({ b: 1, a: [null, true, 'x'] }), '{"a":[null,true,"x"],"b":1}', 'JSON values encode exactly as before');
+  const rec = { kind: VTA_KIND, publicKeyHex: '00'.repeat(32), at: 'x', sig: '00'.repeat(64) };   // no kappa
+  const v = verifyEnvelope('agentprivacy.vta/1', Buffer.from(JSON.stringify(rec)));
+  assert.equal(v.state, 'invalid');
 });
