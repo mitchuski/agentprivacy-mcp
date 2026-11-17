@@ -1,6 +1,6 @@
 # Formally verified parts of this repository
 
-Sealed in the κ registry: formal_mage evidence bundle `evidence/2026-10-26_75`, root `sha256:d4d42f9e333323b20d5b649525cbe28f8885fa2cb0cdd10943a04cac3793b9da` (75 theorems, 75/75 within the standard axioms).
+Sealed in the κ registry: formal_mage evidence bundle `evidence/2026-11-04_83`, root `sha256:81f2dd578a4fb486c502268e38fcd1302509f6c19656e5410d32946dd5a6f703` (83 theorems, 83/83 within the standard axioms).
 
 Code here whose behaviour carries a machine-checked receipt in `formal_mage` (Lean 4, core library, kernel-checked, axiom-audited). `node tools/formal_census.mjs <this repo>` in formal_mage fails if a tag names a theorem outside the audited census.
 
